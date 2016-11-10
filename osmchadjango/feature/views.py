@@ -74,7 +74,8 @@ class FeatureListView(ListView):
             elif params['all_reason'] == 'False':
                 queryset = queryset.filter(reasons__in= reasonList).distinct()
             else:
-                queryset = queryset.filter(reasons__in=reasonList).annotate(num_reasons=Count('reasons')).filter(num_reasons=len(reasonList))
+                for reason in reasonList:
+                    queryset = queryset.filter(reasons = reason)
         if 'bbox' in params:
             bbox = Polygon.from_bbox((float(b) for b in params['bbox'].split(',')))
             queryset = queryset.filter(changeset__bbox__bboverlaps=bbox)
