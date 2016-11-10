@@ -59,6 +59,7 @@ class FeatureListView(ListView):
                 params[key] = GET_dict[key]
 
         self.validate_params(params)
+
         if 'reasons[]' in params:
             params['reasons[]'] = self.request.GET.getlist('reasons[]')
             reasonList = list(map(int, params['reasons[]']))
