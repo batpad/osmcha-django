@@ -33,6 +33,9 @@ class FeatureListView(ListView):
             get['harmful'] = 'False'
         if 'checked' not in get:
             get['checked'] = 'All'
+        if 'all_reason' not in get:
+            get['all_reason'] = 'True'
+        reasons = self.request.GET.getlist('reasons[]')
         sorts = {
             '-date': 'Recent First',
             '-delete': 'Most Deletions First',
@@ -42,7 +45,8 @@ class FeatureListView(ListView):
         context.update({
             'suspicion_reasons': suspicion_reasons,
             'get': get,
-            'sorts': sorts
+            'sorts': sorts,
+            'reasons': list(map(int, reasons))
         })
         return context
 
@@ -55,20 +59,24 @@ class FeatureListView(ListView):
                 params[key] = GET_dict[key]
 
         self.validate_params(params)
+        if 'reasons[]' in params:
+            params['reasons[]'] = self.request.GET.getlist('reasons[]')
+            reasonList = list(map(int, params['reasons[]']))
 
         if 'harmful' not in params:
             params['harmful'] = 'False'
         if 'checked' not in params:
             params['checked'] = 'All'
-        if 'reasons' in params:
-            if params['reasons'] == 'None':
+        if 'reasons[]' in params:
+            if params['reasons[]'] == 'None':
                 queryset = queryset.filter(reasons=None)
+            elif params['all_reason'] == 'False':
+                queryset = queryset.filter(reasons__in= reasonList).distinct()
             else:
-                queryset = queryset.filter(reasons=int(params['reasons']))
+                queryset = queryset.filter(reasons__in=reasonList).annotate(num_reasons=Count('reasons')).filter(num_reasons=len(reasonList))
         if 'bbox' in params:
             bbox = Polygon.from_bbox((float(b) for b in params['bbox'].split(',')))
             queryset = queryset.filter(changeset__bbox__bboverlaps=bbox)
-
         queryset = FeatureFilter(params, queryset=queryset).qs
 
         if 'sort' in GET_dict and GET_dict['sort'] != '':
