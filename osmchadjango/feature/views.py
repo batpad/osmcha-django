@@ -14,6 +14,7 @@ from django.contrib.gis.geos import Polygon
 from .models import Feature
 from osmchadjango.changeset import models as changeset_models
 from filters import FeatureFilter
+from django.db import IntegrityError
 
 # Create your views here.
 from django.http import HttpResponse
@@ -148,7 +149,11 @@ def suspicion_create(request):
         changeset, created = changeset_models.Changeset.objects.get_or_create(id=changeset_id, defaults=defaults)
         changeset.is_suspect = True
         changeset.reasons.add(*reasons)
-        changeset.save()
+        try:
+            changeset.save()
+        except IntegrityError as e:
+            print properties['osm:id'] , "Integrity Error"
+            pass
         try:
             geometry = GEOSGeometry(json.dumps(feature['geometry']))
         except:
