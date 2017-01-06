@@ -196,14 +196,7 @@ class SetHarmfulFeature(SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.object.changeset.uid not in [i.uid for i in request.user.social_auth.all()]:
-            return render(
-                request,
-                'feature/confirm_modify.html',
-                {'feature': self.object, 'modification': _('harmful')}
-                )
-        else:
-            return render(request, 'feature/not_allowed.html')
+        return HttpResponseRedirect(reverse('feature:detail', args=[self.object.changeset, self.object.url]))
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -245,14 +238,8 @@ class SetGoodFeature(SingleObjectMixin, View):
         return get_object_or_404(Feature, changeset= changeset, url = url )
 
     def get(self, request, *args, **kwargs):
-        if self.object.changeset.uid not in [i.uid for i in request.user.social_auth.all()]:
-            return render(
-                request,
-                'feature/confirm_modify.html',
-                {'feature': self.object, 'modification': _('good')}
-                )
-        else:
-            return render(request, 'feature/not_allowed.html')
+        self.object = self.get_object()
+        return HttpResponseRedirect(reverse('feature:detail', args=[self.object.changeset, self.object.url]))
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -265,3 +252,16 @@ class SetGoodFeature(SingleObjectMixin, View):
             return HttpResponseRedirect(reverse('feature:detail', args=[self.object.changeset, self.object.url]))
         else:
             return render(request, 'feature/not_allowed.html')
+
+def undo_feature_marking(request, changeset, url):
+    feature_qs = Feature.objects.filter(changeset = changeset, url = url)
+    feature = feature_qs[0]
+    if request.user != feature.check_user:
+        return render(request, 'feature/not_allowed.html')
+
+    feature.checked = False
+    feature.check_user = None
+    feature.check_date = None
+    feature.harmful = None
+    feature.save()
+    return HttpResponseRedirect(reverse('feature:detail', args=[changeset, url]))

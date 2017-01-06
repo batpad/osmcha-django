@@ -42,4 +42,9 @@ urlpatterns = [
         view=views.whitelist_user,
         name='whitelist_user'
     ),
+    url(
+        regex=r'^undo-feature-marking/(?P<changeset>\d+)/features/(?P<url>[a-zA-Z0-9-]+)/$',
+        view=views.undo_feature_marking,
+        name='undo_feature_marking'
+    ),
 ]

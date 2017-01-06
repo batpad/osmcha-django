@@ -37,6 +37,10 @@
             {% trans 'HDYC' %}
           </a>
           {% if feature.checked %}
+          <form action="{% url 'feature:undo_feature_marking' feature.changeset_id feature.url %}" method="post" style="display:inline">
+            <button class="btn btn-primary undoMarking" type="submit">{% csrf_token %}{% trans 'Undo' %}
+            </button>
+          </form>
           {% if feature.harmful %}
           <span class="glyphicon glyphicon-thumbs-down"></span>
           {% blocktrans with check_user=feature.check_user%}
@@ -55,33 +59,26 @@
             </button>
             <ul class="dropdown-menu">
               <li>
-                <a class="markGood"
-                {% if request.user.is_authenticated %}
-                data-toggle="modal" data-target="#notHarmfulModal"
-                {% else %}
-                href="{% url 'feature:set_good' feature.changeset_id feature.url %}"
-                {% endif %}
-                >
-                <span class="glyphicon glyphicon-thumbs-up"></span> {% trans 'Mark as verified and not harmful' %}
-              </a>
+                <form action="{% url 'feature:set_good' feature.changeset_id feature.url %}" method="post">{% csrf_token %}
+                <button class="markGood" type="submit">
+                  <span class="glyphicon glyphicon-thumbs-up"></span> {% trans 'Mark as verified and not harmful' %}
+                </button>
+                </form>
             </li>
             <li>
-              <a class="markBad"
-              {% if request.user.is_authenticated %}
-              data-toggle="modal" data-target="#harmfulModal"
-              {% else %}
-              href="{% url 'feature:set_harmful' feature.changeset_id feature.url %}"
-              {% endif %}
-              >
-              <span class="glyphicon glyphicon-thumbs-down"></span> {% trans 'Mark as verified and harmful' %}
-            </a>
+            <form action="{% url 'feature:set_harmful' feature.changeset_id feature.url %}" method="post">{% csrf_token %}
+             <button class="markBad" type="submit">
+             <span class="glyphicon glyphicon-thumbs-down"></span>
+             {% trans 'Mark as verified and harmful' %}
+             </button>
+            </form>
           </li>
           {% if request.user.is_authenticated %}
           <li>
-            <a class="whitelist-user" data-username="{{ feature.changeset.user }}" href="#">
+            <button type="submit" class="whitelist-user" data-username="{{ feature.changeset.user }}" href="#">
               <span class="glyphicon glyphicon-thumbs-up"></span>
               {% trans 'White-list this user' %}
-            </a>
+            </button>
           </li>
           {% endif %}
           </ul>
@@ -196,62 +193,36 @@
       </h4>
     </div>
   </div>
-  {% if request.user.is_authenticated and not feature.checked %}
-    <div class="modal fade" id="notHarmfulModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="{% trans 'Close' %}">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title" id="myModalLabel">
-              {% blocktrans %}Do you really want to mark the feature {{ feature }} as good?{% endblocktrans %}
-            </h4>
-          </div>
-          <div class="modal-body">
-            <form action="{% url 'feature:set_good' feature.changeset_id feature.url %}" method="post">{% csrf_token %}
-              <button class="btn btn-primary btn-success" type="submit">{% trans "Yes, I'm sure" %}</button>
-              <a class="btn btn-default" data-dismiss="modal">
-                {% trans "No, don't mark it as good" %}
-              </a>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="harmfulModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title" id="myModalLabel">
-              {% blocktrans %}Do you really want to mark the feature {{ feature }} as harmful?{% endblocktrans %}
-            </h4>
-          </div>
-          <div class="modal-body">
-            <div class="alert alert-danger" role="alert">
-              <p>{% trans 'Only mark a feature as harmful if you have already fixed or reverted it.' %}</p>
-            </div>
-            <form action="{% url 'feature:set_harmful' feature.changeset_id feature.url %}" method="post">{% csrf_token %}
-              <button class="btn btn-primary btn-success" type="submit">{% trans "Yes, I'm sure" %}</button>
-              <a class="btn btn-default" data-dismiss="modal">
-                {% trans "No, don't mark it as harmful" %}
-              </a>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  {% endif %}
 
 {% endblock content %}
 
 {% block javascript %}
   {{ block.super }}
 <script>
+  $(document).ready(function () {
+    $(window).on('keypress', function(e) {
+      var key = e.keyCode || e.charCode;
+      if (key === 106) {
+        // key j for JOSM
+        $('.openInJOSM').click();
+      } else if (key === 104) {
+        // key h for open HDYC
+        $('.openHdyc')[0].click();
+      } else if (key === 111) {
+        // key o for open in OSM
+        $('.openOSM')[0].click();
+      } else if (key === 103) {
+        // key g to mark as good
+        $('.markGood')[0].click();
+      } else if (key === 98) {
+        // key b to mark as bad
+        $('.markBad')[0].click();
+      } else if (key === 117) {
+        // key u to undo marking
+        $('.undoMarking').click();
+      }
+    });
+  });
 $('.has_tooltip').tooltip({
   'html': true,
   'placement': 'bottom'
