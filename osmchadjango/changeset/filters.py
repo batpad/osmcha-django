@@ -64,6 +64,7 @@ class ChangesetFilter(django_filters.FilterSet):
             'date': ['gte', 'lte'],
             'max_score': [],
             'editor': ['icontains'],
+            'imagery_used': ['icontains'],
             'comment': ['icontains'],
             'source': ['icontains'],
             'harmful': [],

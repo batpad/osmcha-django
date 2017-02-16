@@ -126,6 +126,7 @@ def get_geojson(request, changeset, slug):
 
 @csrf_exempt
 def suspicion_create(request):
+    print request.body
     if request.method=='POST':
         try:
             feature = json.loads(request.body)
