@@ -85,7 +85,7 @@ class ChangesetListView(ListView):
         if 'is_whitelisted' not in get:
             get['is_whitelisted'] = 'True'
         if 'harmful' not in get:
-            get['harmful'] = 'False'
+            get['harmful'] = 'All'
         if 'checked' not in get:
             get['checked'] = 'All'
         sorts = {
