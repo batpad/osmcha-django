@@ -128,3 +128,13 @@ Management Commands
 1. Export a CSV of all harmful changesets
 
     $ python manage.py generate_harmful_csv filename.csv
+
+2. Mark a list of changesets as harmful or good, provided the first column in csv contains changeset ids
+
+    - To mark changesets as bad
+
+        $ python manage.py mark_harmful_changeset checking_username filename.csv True
+
+    - To mark changesets as good
+
+        $ python manage.py mark_harmful_changeset checking_username filename.csv ""
