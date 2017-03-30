@@ -158,12 +158,12 @@ class ChangesetListView(ListView):
     def render_to_response(self, context, **response_kwargs):
         get_params = self.request.GET.dict()
         if 'render_csv' in get_params.keys() and get_params['render_csv'] == 'True':
-            queryset = self.get_queryset()
+            queryset = self.get_queryset().select_related('check_user')
             queryset = queryset.values(
                 'id', 'user', 'editor', 'powerfull_editor', 'comment', 'source',
                 'imagery_used', 'date', 'reasons', 'reasons__name', 'create',
                 'modify', 'delete', 'bbox', 'is_suspect', 'harmful', 'checked',
-                'check_user.username', 'check_date'
+                'check_user__username', 'check_date'
                 )
             return render_to_csv_response(queryset)
         else:
