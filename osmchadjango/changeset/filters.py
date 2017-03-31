@@ -59,6 +59,7 @@ class ChangesetFilter(FilterSet):
             'modify': ['gte', 'lte'],
             'delete': ['gte', 'lte'],
             'date': ['gte', 'lte'],
+            'check_date': ['gte', 'lte'],
             'editor': ['icontains'],
             'imagery_used': ['icontains'],
             'comment': ['icontains'],
