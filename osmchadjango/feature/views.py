@@ -13,6 +13,7 @@ from django.db import IntegrityError
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.db.models import Count
 
 from osmchadjango.changeset import models as changeset_models
 
@@ -76,7 +77,11 @@ class FeatureListView(ListView):
             else:
                 for reason in reasonList:
                     queryset = queryset.filter(reasons = reason)
-                queryset = queryset.filter(reasons__in=reasonList).annotate(num_reasons=Count('reasons')).filter(num_reasons=len(reasonList))
+        elif 'reasons' in params:
+            if params['reasons'] == 'None':
+                queryset = queryset.filter(reasons=None)
+            else:
+                queryset = queryset.filter(reasons=int(params['reasons']))
 
         if 'bbox' in params:
             bbox = Polygon.from_bbox((float(b) for b in params['bbox'].split(',')))
