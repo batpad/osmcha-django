@@ -92,14 +92,21 @@
       <div class="form-group">
         <label for="reasons" class="col-sm-2 control-label">Reason:</label>
         <div class="col-sm-3">
-          <select class="form-control" name="reasons">
-            <option value="">---------</option>
+          <select class="form-control multiselect" name="reasons[]" multiple>
             {% for reason in  suspicion_reasons %}
-              <option value="{{ reason.id }}" {% if get.reasons|add:"0" == reason.id %} selected="selected" {% endif %}>
+              <option value="{{ reason.id }}" {% if reason.id in reasons %} selected="selected" {% endif %}>
                 {{ reason.name }}
               </option>
             {% endfor %}
           </select>
+          <label class="radio-inline">
+            <input name="all_reason" type="radio" value="True" {% if get.all_reason == 'True' %} checked {% endif %} />
+            All of selected
+          </label>
+          <label class="radio-inline">
+            <input name="all_reason" type="radio" value="False" {% if get.all_reason == 'False' %} checked {% endif %} />
+            Any of selected
+          </label>
         </div>
         <label class="col-sm-2 control-label" for="bbox">BBox:</label>
         <div class="col-sm-3">

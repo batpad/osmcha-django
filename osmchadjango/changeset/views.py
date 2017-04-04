@@ -11,6 +11,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Count
 from django.contrib.gis.geos import Polygon
+from django.db.models import Count
 
 from djqscsv import render_to_csv_response
 
@@ -88,6 +89,9 @@ class ChangesetListView(ListView):
             get['harmful'] = 'False'
         if 'checked' not in get:
             get['checked'] = 'All'
+        if 'all_reason' not in get:
+            get['all_reason'] = 'True'
+        reasons = self.request.GET.getlist('reasons[]')
         sorts = {
             '-date': 'Recent First',
             '-delete': 'Most Deletions First',
@@ -97,7 +101,8 @@ class ChangesetListView(ListView):
         context.update({
             'suspicion_reasons': suspicion_reasons,
             'get': get,
-            'sorts': sorts
+            'sorts': sorts,
+            'reasons': list(map(int, reasons))
             })
         return context
 
@@ -111,6 +116,10 @@ class ChangesetListView(ListView):
                 params[key] = GET_dict[key]
         self.validate_params(params)
 
+        if 'reasons[]' in params:
+            params['reasons[]'] = self.request.GET.getlist('reasons[]')
+            reasonList = list(map(int, params['reasons[]']))
+
         if 'is_suspect' not in params:
             params['is_suspect'] = 'True'
         if 'is_whitelisted' not in params:
@@ -120,7 +129,16 @@ class ChangesetListView(ListView):
         if 'checked' not in params:
             params['checked'] = 'All'
         queryset = ChangesetFilter(params, queryset=queryset).qs
-        if 'reasons' in params:
+
+        if 'reasons[]' in params:
+            if params['reasons[]'] == 'None':
+                queryset = queryset.filter(reasons=None)
+            elif params['all_reason'] == 'False':
+                queryset = queryset.filter(reasons__in= reasonList).distinct()
+            else:
+                for reason in reasonList:
+                    queryset = queryset.filter(reasons = reason)
+        elif 'reasons' in params:
             if params['reasons'] == 'None':
                 queryset = queryset.filter(reasons=None)
             else:
