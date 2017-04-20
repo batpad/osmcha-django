@@ -15,6 +15,11 @@
           <span class="label label-warning" title="Total features modified">{{ changeset.modify }}</span>
           <span class="label label-danger" title="Total features removed">{{ changeset.delete }}</span>
         </h3>
+        <div>
+          User changesets in OSMCha: {{ changeset.user_details.user_total }} <br />
+          Marked Good: {{ changeset.user_details.user_good }} <br />
+          Marked Harmful: {{ changeset.user_details.user_bad }}
+        </div>
       </div>
     </div>
     <div class="row">

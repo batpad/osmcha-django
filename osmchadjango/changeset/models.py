@@ -148,6 +148,14 @@ class Changeset(models.Model):
     def features(self):
         return self.feature_set.all()
 
+    @property
+    def user_details(self):
+        return {
+            'user_good': Changeset.objects.filter(user=self.user, checked=True, harmful=False).count(),
+            'user_bad': Changeset.objects.filter(user=self.user, checked=True, harmful=True).count(),
+            'user_total': Changeset.objects.filter(user=self.user).count()
+        }
+
 
 class Import(models.Model):
     """Class to register the import of Changesets."""
