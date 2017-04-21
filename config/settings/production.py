@@ -19,6 +19,8 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # properly on Heroku.
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+USE_X_FORWARDED_HOST = True
+
 # django-secure
 # ------------------------------------------------------------------------------
 INSTALLED_APPS += ("djangosecure", 'gunicorn',)
