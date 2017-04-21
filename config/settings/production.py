@@ -91,24 +91,24 @@ DATABASES = {
 #     }
 # }
 
-REDIS_LOCATION = '{0}/{1}'.format(env('REDIS_URL', default='redis://127.0.0.1:6379'), 0)
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': REDIS_LOCATION,
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'IGNORE_EXCEPTIONS': True,  # mimics memcache behavior.
-                                        # http://niwinz.github.io/django-redis/latest/#_memcached_exceptions_behavior
-        }
-    }
-}
+# REDIS_LOCATION = '{0}/{1}'.format(env('REDIS_URL', default='redis://127.0.0.1:6379'), 0)
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': REDIS_LOCATION,
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#             'IGNORE_EXCEPTIONS': True,  # mimics memcache behavior.
+#                                         # http://niwinz.github.io/django-redis/latest/#_memcached_exceptions_behavior
+#         }
+#     }
+# }
 
-# Your production stuff: Below this line define 3rd party library settings
+# # Your production stuff: Below this line define 3rd party library settings
 
-CELERYBEAT_SCHEDULE = {
-    'schedule-name': {
-        'task': 'osmchadjango.changeset.tasks.fetch_latest',
-        'schedule': 60 #Run every 60 seconds
-    },
-}
+# CELERYBEAT_SCHEDULE = {
+#     'schedule-name': {
+#         'task': 'osmchadjango.changeset.tasks.fetch_latest',
+#         'schedule': 60 #Run every 60 seconds
+#     },
+# }
