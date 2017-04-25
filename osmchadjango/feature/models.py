@@ -37,6 +37,12 @@ class Feature(models.Model):
         return 'http://www.openstreetmap.org/%s/%s' % (self.osm_type, self.osm_id)
 
     @property
+    def josm_link(self):
+        obj_id = self.osm_type[0:1] + str(self.osm_id)
+        extra = '?relation_members=true' if self.osm_type == 'relation' else ''
+        return 'http://localhost:8111/load_object?new_layer=true&objects=%s%s' % (obj_id, extra,)
+
+    @property
     def all_tags(self):
         geojson = self.geojson
         tags = []
