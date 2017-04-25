@@ -31,7 +31,7 @@
     <div class="row">
       <div class="col-xs-12 sticky" data-spy="affix" data-offset-top="300">
         <div class="btn-group">
-          <a class="btn btn-primary openInJOSM" target="_blank" href="{{ changeset.josm_link }}">
+          <a class="btn btn-primary openInJOSM openChangesetInJOSM" target="_blank" href="{{ changeset.josm_link }}">
             {% trans 'Open in <u>J</u>OSM' %}
           </a>
           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -150,6 +150,9 @@
                 Map
               </th>
               <th>
+                JOSM
+              </th>
+              <th>
                 Reasons
               </th>
             </tr>
@@ -170,6 +173,11 @@
               <td>
                 <a class='select-feature' data-id='{{ feature.url }}' href="">
                   Show on map
+                </a>
+              </td>
+              <td>
+                <a class="openInJOSM" href="{{ feature.josm_link }}" target="_blank">
+                  Open in JOSM
                 </a>
               </td>
               <td>
@@ -260,7 +268,7 @@
       var key = e.keyCode || e.charCode;
       if (key === 106) {
         // key j for JOSM
-        $('.openInJOSM').click();
+        $('.openChangesetInJOSM').click();
       } else if (key === 104) {
         // key h for open HDYC
         $('.openHdyc')[0].click();
