@@ -30,7 +30,7 @@
       <div class="col-xs-12">
         <h4 id="harmfulTagLabels">
           {% for reason in changeset.harmful_reasons.all %}
-          <span class="label label-default">{{ reason.description }}</span>
+          <span class="label label-warning">{{ reason.description }}</span>
           {% endfor %}
         </h4>
       </div>
@@ -103,6 +103,7 @@
     </div>
     {% endif %}
     <div>
+      Add Tag:
       <select id="harmfulTagsSelect">
         <option name="">--------</option>
         {% for tag in harmful_tags %}

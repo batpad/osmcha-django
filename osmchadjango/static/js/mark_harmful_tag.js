@@ -10,7 +10,7 @@ $(function() {
         }, function(response) {
             $('#harmfulTagLabels').append(
                 $('<span />')
-                    .addClass('label label-default')
+                    .addClass('label label-warning')
                     .text(description)
             );
         }, 'json').fail(function(err) {
