@@ -3,7 +3,7 @@ import datetime
 from django.views.generic import View, ListView, DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.core.urlresolvers import reverse
 from django.utils import timezone
@@ -15,7 +15,7 @@ from django.db.models import Count
 
 from djqscsv import render_to_csv_response
 
-from .models import Changeset, UserWhitelist, SuspicionReasons
+from .models import Changeset, UserWhitelist, SuspicionReasons, HarmfulReason
 from .filters import ChangesetFilter
 
 
@@ -193,6 +193,12 @@ class ChangesetDetailView(DetailView):
     model = Changeset
     context_object_name = 'changeset'
 
+    def get_context_data(self, **kwargs):
+        context = super(ChangesetDetailView, self).get_context_data(**kwargs)
+        context.update({
+            'harmful_tags': HarmfulReason.objects.all()
+            })
+        return context
 
 class SetHarmfulChangeset(SingleObjectMixin, View):
     model = Changeset
@@ -321,6 +327,18 @@ def stats(request):
         }
     return render(request, 'changeset/stats.html', context=context)
 
+@csrf_exempt
+def set_harmful_tag(request):
+    changeset_id = request.POST.get('changeset')
+    tag_name = request.POST.get('tag_name')
+    changeset = get_object_or_404(Changeset, pk=changeset_id)
+    harmful_tag = get_object_or_404(HarmfulReason, name=tag_name)
+    changeset.harmful_reasons.add(harmful_tag)
+    try:
+        changeset.save()
+        return JsonResponse({'ok': 'ok'})
+    except:
+        return JsonResponse({'fail': 'duplicate'}, status_code=400)
 
 def all_whitelist_users(request):
     """View that lists all whitelisted users."""

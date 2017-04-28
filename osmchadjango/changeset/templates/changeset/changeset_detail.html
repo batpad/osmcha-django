@@ -27,6 +27,13 @@
         </h4>
       </div>
       {% endif %}
+      <div class="col-xs-12">
+        <h4 id="harmfulTagLabels">
+          {% for reason in changeset.harmful_reasons.all %}
+          <span class="label label-default">{{ reason.description }}</span>
+          {% endfor %}
+        </h4>
+      </div>
     </div>
     <div class="row">
       <div class="col-xs-12 sticky" data-spy="affix" data-offset-top="300">
@@ -95,6 +102,14 @@
       </ul>
     </div>
     {% endif %}
+    <div>
+      <select id="harmfulTagsSelect">
+        <option name="">--------</option>
+        {% for tag in harmful_tags %}
+        <option value="{{ tag.name }}">{{ tag.description }}</option>
+        {% endfor %}
+      </select>
+    </div>
   </div>
 
 </div>
@@ -307,5 +322,6 @@
 </script>
 <script src="{% static 'js/josm_link.js' %}"></script>
 <script src="{% static 'js/whitelist_user.js' %}"></script>
+<script src="{% static 'js/mark_harmful_tag.js' %}"></script>
 <script src="{% static 'js/fetch_comments.js' %}"></script>
 {% endblock javascript %}
