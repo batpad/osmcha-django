@@ -91,6 +91,8 @@ class ChangesetListView(ListView):
             get['checked'] = 'All'
         if 'all_reason' not in get:
             get['all_reason'] = 'True'
+        if 'tags' in get and get['tags'] != '':
+            get['tags'] = int(get['tags'])
         reasons = self.request.GET.getlist('reasons[]')
         sorts = {
             '-date': 'Recent First',
@@ -100,6 +102,7 @@ class ChangesetListView(ListView):
             }
         context.update({
             'suspicion_reasons': suspicion_reasons,
+            'harmful_tags': HarmfulReason.objects.all(),
             'get': get,
             'sorts': sorts,
             'reasons': list(map(int, reasons))

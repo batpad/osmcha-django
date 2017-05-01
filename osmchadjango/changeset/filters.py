@@ -12,6 +12,7 @@ class ChangesetFilter(FilterSet):
     is_suspect = filters.MethodFilter()
     usernames = filters.MethodFilter()
     checked_by = filters.MethodFilter()
+    tags = filters.MethodFilter()
     bbox = filters.MethodFilter()
 
     def filter_checked_by(self, queryset, value):
@@ -49,6 +50,12 @@ class ChangesetFilter(FilterSet):
         if value:
             users_array = [t.strip() for t in value.split(',')]
             return queryset.filter(user__in=users_array)
+        return queryset
+
+    def filter_tags(self, queryset, value):
+        print "tag filter called"
+        if value:
+            return queryset.filter(harmful_reasons=value)
         return queryset
 
     class Meta:
