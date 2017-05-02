@@ -58,6 +58,8 @@ class HarmfulReason(models.Model):
         self.full_clean()
         super(HarmfulReason, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['description']
 
 class UserWhitelist(models.Model):
     user = models.ForeignKey(User)
