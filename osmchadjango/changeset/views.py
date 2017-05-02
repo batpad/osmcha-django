@@ -336,6 +336,9 @@ def set_harmful_tag(request):
     tag_name = request.POST.get('tag_name')
     changeset = get_object_or_404(Changeset, pk=changeset_id)
     harmful_tag = get_object_or_404(HarmfulReason, name=tag_name)
+    user = request.user
+    if not user.is_authenticated() or not request.user == changeset.check_user:
+        return JsonResponse({'fail': 'insufficient permissions'}, status_code=401)
     changeset.harmful_reasons.add(harmful_tag)
     try:
         changeset.save()

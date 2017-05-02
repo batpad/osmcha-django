@@ -102,6 +102,7 @@
       </ul>
     </div>
     {% endif %}
+    {% if request.user.is_authenticated and request.user == changeset.check_user %}
     <div>
       Add Tag:
       <select id="harmfulTagsSelect">
@@ -111,6 +112,7 @@
         {% endfor %}
       </select>
     </div>
+    {% endif %}
   </div>
 
 </div>
