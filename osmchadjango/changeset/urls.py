@@ -72,5 +72,10 @@ urlpatterns = [
         regex=r'^set_harmful_tag$',
         view=views.set_harmful_tag,
         name='set_harmful_tag'
+    ),
+    url(
+        regex=r'^remove_harmful_tag$',
+        view=views.remove_harmful_tag,
+        name='remove_harmful_tag'
     )
 ]

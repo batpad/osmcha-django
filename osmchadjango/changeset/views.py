@@ -346,6 +346,22 @@ def set_harmful_tag(request):
     except:
         return JsonResponse({'fail': 'duplicate'}, status_code=400)
 
+@csrf_exempt
+def remove_harmful_tag(request):
+    changeset_id = request.POST.get('changeset')
+    tag_name = request.POST.get('tag_name')
+    changeset = get_object_or_404(Changeset, pk=changeset_id)
+    harmful_tag = get_object_or_404(HarmfulReason, name=tag_name)
+    user = request.user
+    if not user.is_authenticated() or not request.user == changeset.check_user:
+        return JsonResponse({'fail': 'insufficient permissions'}, status_code=401)
+    changeset.harmful_reasons.remove(harmful_tag)
+    try:
+        changeset.save()
+        return JsonResponse({'ok': 'ok'})
+    except:
+        return JsonResponse({'fail': 'unknown error'}, status_code=400)    
+
 def all_whitelist_users(request):
     """View that lists all whitelisted users."""
     all_users = UserWhitelist.objects.values('whitelist_user').distinct()
