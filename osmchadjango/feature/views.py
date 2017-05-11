@@ -139,6 +139,25 @@ def get_geojson(request, changeset, slug):
 
 
 @csrf_exempt
+def suspicion_remove(request):
+    if not request.method == 'POST':
+        return HttpResponse(status=400)
+    if not ('key' in request.GET.dict().keys() and
+            request.GET.dict()['key'] in settings.FEATURE_CREATION_KEYS):
+        return HttpResponse(status=401)
+    feature_id = request.POST.get('feature_id', None)
+    feature_type = request.POST.get('feature_type', None)
+    changeset_id = request.POST.get('changeset_id', None)
+    reason = request.POST.get('reason', None)
+    if not feature_id or not feature_type or not changeset_id or not reason:
+        return HttpResponse(status=400)
+    feature = get_object_or_404(Feature, changeset=int(changeset_id), osm_id=int(feature_id),
+                                osm_type=feature_type)
+    reason = get_object_or_404(changeset_models.SuspicionReasons, name=reason)
+    feature.reasons.remove(reason)
+    return JsonResponse({'ok': 'success'})
+
+@csrf_exempt
 def suspicion_create(request):
     """Create Suspicion Features. It nees to receive a key as get parameter in
     the url.
