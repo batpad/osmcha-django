@@ -184,7 +184,7 @@ class ChangesetListView(ListView):
                 'id', 'user', 'editor', 'powerfull_editor', 'comment', 'source',
                 'imagery_used', 'date', 'reasons', 'reasons__name', 'create',
                 'modify', 'delete', 'bbox', 'is_suspect', 'harmful', 'checked',
-                'check_user__username', 'check_date'
+                'check_user__username', 'check_date', 'harmful_reasons__name'
                 )
             return render_to_csv_response(queryset)
         else:
