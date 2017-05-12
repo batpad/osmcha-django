@@ -152,6 +152,8 @@ def suspicion_remove(request):
     if not feature_id or not feature_type or not changeset_id or not reason:
         return HttpResponse(status=400)
     changeset = get_object_or_404(changeset_models.Changeset, pk=int(changeset_id))
+    if changeset.checked == True:
+        return JsonResponse({'ok': 'success'})
     feature = get_object_or_404(Feature, changeset=changeset, osm_id=int(feature_id),
                                 osm_type=feature_type)
     reason = get_object_or_404(changeset_models.SuspicionReasons, name=reason)
