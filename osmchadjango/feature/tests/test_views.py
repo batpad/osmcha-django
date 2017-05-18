@@ -44,6 +44,24 @@ class TestFeatureSuspicionCreate(TestCase):
             )
         self.assertEqual(response.status_code, 400)
 
+    def test_suspicion_remove(self):
+        self.client.post(
+            reverse('feature:create_suspicion') + '?key=secret',
+            data=json.dumps(self.fixture),
+            content_type="application/json"
+            )
+        response = self.client.post(
+            reverse('feature:remove_suspicion') + '?key=secret',
+            {
+                'feature_id': 169218447,
+                'feature_type': 'way',
+                'changeset_id': 42893048,
+                'reason': 'moved an object a significant amount'
+            }
+            )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Feature.objects.get(osm_id=169218447).reasons.count(), 0)
+
     def test_unathenticated_suspicion_create(self):
         response = self.client.post(
             reverse('feature:create_suspicion'),
