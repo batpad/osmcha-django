@@ -63,6 +63,8 @@ DATABASES = {
      }
 }
 
+SECURE_SSL_REDIRECT = True
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
